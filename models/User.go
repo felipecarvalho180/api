@@ -15,7 +15,12 @@ type User struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 }
 
-func (user *User) validate() error {
+const (
+	SIGN_UP_STEP = iota
+	UPDATE_USER_STEP
+)
+
+func (user *User) validate(step int) error {
 	if user.Name == "" {
 		return errors.New("User must have a name")
 	}
@@ -25,7 +30,7 @@ func (user *User) validate() error {
 	if user.Email == "" {
 		return errors.New("User must have a email")
 	}
-	if user.Password == "" {
+	if step == SIGN_UP_STEP && user.Password == "" {
 		return errors.New("User must have a password")
 	}
 
@@ -38,8 +43,8 @@ func (user *User) format() {
 	user.Email = strings.TrimSpace(user.Email)
 }
 
-func (user *User) Prepare() error {
-	if err := user.validate(); err != nil {
+func (user *User) Prepare(step int) error {
+	if err := user.validate(step); err != nil {
 		return err
 	}
 

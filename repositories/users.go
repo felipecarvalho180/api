@@ -97,3 +97,33 @@ func (usersRepository users) FindByID(ID uint64) (models.User, error) {
 
 	return user, nil
 }
+
+func (usersRepository users) Update(ID uint64, user models.User) error {
+	statement, err := usersRepository.db.Prepare("update users set name = ?, email = ?, nick = ? where id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+
+	if _, err := statement.Exec(user.Name, user.Email, user.Nick, ID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (usersRepository users) Delete(ID uint64) error {
+	statement, err := usersRepository.db.Prepare("delete from users where id = ?")
+
+	if err != nil {
+		return err
+	}
+
+	defer statement.Close()
+	if _, err := statement.Exec(ID); err != nil {
+		return err
+	}
+
+	return nil
+}

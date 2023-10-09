@@ -1,6 +1,7 @@
 package models
 
 import (
+	"devbook-api/helpers"
 	"errors"
 	"strings"
 	"time"
@@ -42,10 +43,21 @@ func (user *User) validate(step int) error {
 	return nil
 }
 
-func (user *User) format() {
+func (user *User) format(step int) error {
 	user.Name = strings.TrimSpace(user.Name)
 	user.Nick = strings.TrimSpace(user.Nick)
 	user.Email = strings.TrimSpace(user.Email)
+
+	if step == SIGN_UP_STEP {
+		passwordWithHash, err := helpers.Hash(user.Password)
+		if err != nil {
+			return err
+		}
+
+		user.Password = string(passwordWithHash)
+	}
+
+	return nil
 }
 
 func (user *User) Prepare(step int) error {
@@ -53,6 +65,9 @@ func (user *User) Prepare(step int) error {
 		return err
 	}
 
-	user.format()
+	if err := user.format(step); err != nil {
+		return err
+	}
+
 	return nil
 }

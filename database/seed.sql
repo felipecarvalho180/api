@@ -9,3 +9,9 @@ values
 (1, 2),
 (2, 3),
 (3, 2);
+
+insert into posts(title, content, author_id)
+values
+("Titulo 1", "Conteudo 1",1),
+("Titulo 2", "Conteudo 2",2),
+("Titulo 3", "Conteudo 3",3);
